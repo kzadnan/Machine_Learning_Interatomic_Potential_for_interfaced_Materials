@@ -1,1 +1,4 @@
-This is a coding platform for evaluating the training and testing dataset for machine learning potentials in interfaced materials, which consists of two dissimilar materials
+This is a coding platform for evaluating the training and testing dataset for machine learning potentials in interfaced materials, which consists of two dissimilar materials. 
+I have added some codes in python related to calculating TBC of A/B interface materials (Data are from LAMMPS simulations) , training and test database creation from total.cfg type data file (First principle calculations) and DFT MTP potential energy, forces and stresses difference code as well.
+Currently the dataset is for MTP from MLIP (Machine Learning Interatomic Potentials). hopefully, I will try to add other potential packages data post processing as well. 
+

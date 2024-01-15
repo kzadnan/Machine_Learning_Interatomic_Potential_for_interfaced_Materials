@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 with open('test.cfg', 'r') as file:
-    # Your code to read or manipulate the file goes here
+    # Inlcude the test.cfg which are from the VASP Simulation results converting OUTCAR to .cfg file and take certain portion as test.cfg
     content_dft = file.read()
     
 lines_dft = content_dft.splitlines()

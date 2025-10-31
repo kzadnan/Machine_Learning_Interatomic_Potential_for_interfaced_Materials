@@ -1,0 +1,19 @@
+from dpdata import LabeledSystem, MultiSystems
+from glob import glob
+
+"""
+process multi systems
+"""
+fs = glob("Train_*.xyz")  # remeber to change here !!!
+ms = MultiSystems()
+for f in fs:
+    try:
+        ls = MultiSystems.from_file(file_name=f, fmt="quip/gap/xyz")
+    except:
+        print(f)
+    if len(ls) > 0:
+        ms.append(ls)
+
+#ms.to_deepmd_raw("deepmd")
+ms.to_deepmd_npy("deepmd")
+print(ms.systems)

@@ -1,0 +1,20 @@
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Read the displaced structure
+read_data run-001.lammps
+
+# Define interatomic potential
+pair_style deepmd graph-compress.pb
+pair_coeff * *
+
+# Apply fix to ensure static calculation
+fix 1 all setforce NULL NULL NULL
+
+# Output forces
+thermo_style custom step temp pe press
+dump 1 all custom 1 forces.lammpstrj id type x y z fx fy fz
+run 0

@@ -1,0 +1,122 @@
+units 	metal
+
+variable 	T equal 300
+variable 	V equal vol
+variable 	dt equal 0.0005
+variable 	d equal 200000	# thermo interval
+
+# convert from LAMMPS metal units to SI
+
+variable 	kB equal 1.3806504e-23	 # [J/K] Boltzmann constant
+variable 	eV2J equal 1.602176565e-19
+variable	ps2s equal 1.0e-12
+variable 	A2m equal 1.0e-10
+
+# set up problem
+dimension 	3
+boundary 	p p s
+atom_style atomic
+
+neighbor	2.0 nsq
+read_data lammps.txt
+
+pair_style mlip mlip.ini
+pair_coeff * * 
+
+### wrong ###########
+#pair_style hybrid lj/cut 12 tersoff/table tersoff/table
+#pair_coeff 1 1  tersoff/table SiCGe.tersoff Si(D)  # Tersoff potential must be * *, cannot specify 1 1
+#pair_coeff 2 2  tersoff/table newC.tersoff C
+#pair_coeff 1 2  lj/cut 0.008909 3.326
+
+#pair_style hybrid lj/cut 8.5 tersoff tersoff
+#pair_coeff * * tersoff 1 SiCGe.tersoff Si(D) NULL 
+#pair_coeff * * tersoff 2 SiCGe.tersoff NULL Ge
+#pair_coeff 1 2 lj/cut 0.1664 3.4
+
+# define cold and hot regions
+
+variable 	l_c equal 5.442
+variable 	Neach equal 80
+variable 	Nedge equal 8
+variable 	Nres equal 8
+variable 	NSED equal 8
+variable 	Nabdon equal 4
+
+variable     posi_leftedge equal 8.0
+variable     posi_rightedge equal 133.0
+variable     posi_hot equal 45
+variable     posi_cold equal 116.0
+
+region 112 block INF INF INF INF INF ${posi_leftedge} units box
+group edge_left region 112
+region 113 block INF INF INF INF ${posi_rightedge} INF units box
+group edge_right region 113
+region 114 block INF INF INF INF ${posi_leftedge}  ${posi_rightedge} units box
+group mid region 114
+
+region 2 block INF INF INF INF ${posi_leftedge}  ${posi_hot} units box
+group hot region 2
+region 3 block  INF INF INF INF ${posi_cold} ${posi_rightedge} units box
+group cold region 3
+
+velocity edge_left set  0.0 0.0 0.0
+velocity edge_right set 0.0 0.0 0.0
+
+# initial velocity
+velocity 	mid create 300 728462 mom yes rot yes dist gaussian
+fix 1 mid momentum 1 linear 1 1 1 angular
+
+timestep 	${dt}
+thermo_style    custom step temp press pe ke lx ly lz
+thermo	$d
+
+# ------------- Equilibration and thermalisation ---------------- 
+fix  NVT mid nvt temp $T $T 0.10 
+dump 1112 all atom 500 nvt.tj #it was npt before
+run 	2000000
+unfix   NVT
+undump  1112
+
+
+# --------------- Equilibration in nve ----------------- 
+reset_timestep  0
+#velocity edge_left set  0.0 0.0 0.0 units box
+#velocity edge_right set 0.0 0.0 0.0 units box
+#fix 22 edge_left setforce 0.0 0.0 0.0
+#fix 23 edge_right setforce 0.0 0.0 0.0
+
+#run 1
+#unfix 22
+#unfix 23
+
+fix 11 hot  langevin 330.0 330.0 0.5 48279  tally yes
+fix 12 cold langevin 270.0 270.0 0.5 48279  tally yes
+
+fix 	NVE mid nve
+
+#fix 11 hot temp/berendsen 350.0 350.0 0.0050
+#fix_modify 11 energy yes
+
+#fix 12 cold temp/berendsen 250.0 250.0 0.0050
+#fix_modify 12 energy yes
+
+#fix 11 hot heat 1 1.0
+#fix 12 cold heat 1 -1.0
+
+thermo_style    custom step temp press pe ke lx ly lz f_11 f_12
+thermo	$d 
+
+
+run 	3000000
+
+# output temperature data for post-processing
+reset_timestep  0
+
+compute      myKE mid ke/atom    # per atom kinetic energy for temperature calculation
+variable temp1 atom c_myKE*${eV2J}*2/3/${kB}    # 1/2*m*v^2 = 3/2*kB*T, unit conversion
+
+compute cc1 mid chunk/atom bin/1d z lower 2.0 units box
+fix 104 mid ave/chunk 10 200000 2000000 cc1 v_temp1 file Tgradient.txt
+
+run 2000000

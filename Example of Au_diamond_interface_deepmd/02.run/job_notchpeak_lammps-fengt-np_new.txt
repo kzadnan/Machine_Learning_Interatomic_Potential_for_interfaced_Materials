@@ -1,0 +1,26 @@
+#!/bin/bash
+#SBATCH --time=72:00:00 
+#SBATCH --nodes=1 
+#SBATCH --ntasks=1             # Single task to manage GPU training
+#SBATCH --cpus-per-task=16      # CPU threads for data loading and preprocessing
+#SBATCH --account=notchpeak-gpu
+#SBATCH --partition=notchpeak-gpu
+#SBATCH --gres=gpu:2            # You requested 2 GPUs
+
+cd $SLURM_SUBMIT_DIR
+
+module load deepmd/2.1.1 
+
+# Force DeepMD/TensorFlow to recognize the GPUs
+export CUDA_VISIBLE_DEVICES=0,1
+export TF_FORCE_GPU_ALLOW_GROWTH=true
+
+# Parallelization optimization
+export OMP_NUM_THREADS=16
+export TF_INTRA_OP_PARALLELISM_THREADS=16
+export TF_INTER_OP_PARALLELISM_THREADS=2
+
+
+module load deepmd/2.1.1 #chpc
+
+mpirun -np 2 -genv OMP_NUM_THREADS $SLURM_NTASKS lmp<inputfile.txt>log.txt

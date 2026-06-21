@@ -1,0 +1,117 @@
+# ====================================================================
+# 1. INITIALIZATION & UNIT CONVERSIONS
+# ====================================================================
+units       metal
+dimension   3
+boundary    p p s
+atom_style  atomic
+neighbor    2.0 nsq
+
+variable    T equal 300
+variable    dt equal 0.0005
+variable    d equal 20000    # thermo interval
+
+# Convert from LAMMPS metal units to SI
+variable    kB equal 1.3806504e-23     # [J/K] Boltzmann constant
+variable    eV2J equal 1.602176565e-19
+variable    ps2s equal 1.0e-12
+variable    A2m equal 1.0e-10
+
+# ====================================================================
+# 2. SYSTEM SETUP & POTENTIAL
+# ====================================================================
+read_data   lammps.txt
+
+pair_style  deepmd graph-compress.pb
+pair_coeff  * * # ====================================================================
+# 3. REGIONS & GROUPS DEFINITION
+# ====================================================================
+variable    posi_leftedge equal 8.0
+variable    posi_rightedge equal 168.0
+variable    posi_hot equal 30.0
+variable    posi_cold equal 155.0
+
+# Fixed Edges
+region      112 block INF INF INF INF INF ${posi_leftedge} units box
+group       edge_left region 112
+region      113 block INF INF INF INF ${posi_rightedge} INF units box
+group       edge_right region 113
+
+# Active middle region (where MD actually happens)
+region      114 block INF INF INF INF ${posi_leftedge}  ${posi_rightedge} units box
+group       mid region 114
+
+# Hot and Cold Baths
+region      2 block INF INF INF INF ${posi_leftedge}  ${posi_hot} units box
+group       hot region 2
+region      3 block  INF INF INF INF ${posi_cold} ${posi_rightedge} units box
+group       cold region 3
+
+# ====================================================================
+# 4. VELOCITY INITIALIZATION & BOUNDARY FIXES
+# ====================================================================
+# Freeze the boundaries completely to prevent ML extrapolation errors
+velocity    edge_left set  0.0 0.0 0.0
+velocity    edge_right set 0.0 0.0 0.0
+fix         22 edge_left setforce 0.0 0.0 0.0
+fix         23 edge_right setforce 0.0 0.0 0.0
+
+# Initialize velocities for the active region
+velocity    mid create ${T} 728552 mom yes rot yes dist gaussian
+fix         1 mid momentum 1 linear 1 1 1 angular
+
+timestep    ${dt}
+thermo_style custom step temp press pe ke lx ly lz
+thermo      $d
+
+# ====================================================================
+# 5. STAGE 1: NVT THERMALIZATION (150 ps)
+# ====================================================================
+fix         NVT mid nvt temp $T $T 0.10 
+# Dump frequency reduced to save disk space during simple equilibration
+dump        1112 all atom 25000 nvt.tj  
+run         300000
+unfix       NVT
+undump      1112
+
+# ====================================================================
+# 6. STAGE 2: ESTABLISH STEADY-STATE TEMP GRADIENT (500 ps)
+# ====================================================================
+reset_timestep  0
+
+# NVE integration for the active region
+fix         NVE mid nve
+
+# Apply Langevin thermostats to create the temperature gradient
+# 'tally yes' allows us to track the energy added/subtracted
+fix         11 hot  langevin 320.0 320.0 0.5 48279  tally yes
+fix         12 cold langevin 280.0 280.0 0.5 48279  tally yes
+
+thermo_style custom step temp press pe ke lx ly lz f_11 f_12
+thermo      $d 
+
+# Run long enough for the heat flux to physically stabilize across the box
+run         1000000
+
+# ====================================================================
+# 7. STAGE 3: DATA COLLECTION / PRODUCTION RUN (1 ns)
+# ====================================================================
+reset_timestep  0
+
+# A. Temperature Profile Calculation
+compute     myKE mid ke/atom 
+variable    temp1 atom c_myKE*${eV2J}*2/3/${kB} 
+
+# High-frequency sampling for a perfectly smooth temperature gradient
+# Samples every 100 steps, averages 20,000 times, prints exactly once at the end
+compute     cc1 mid chunk/atom bin/1d z lower 2.0 units box
+fix         104 mid ave/chunk 100 20000 2000000 cc1 v_temp1 file Tgradient.txt
+
+# B. Heat Flux Calculation
+# Averages the cumulative energy added (hot) and removed (cold) every 1,000 steps
+fix         energy_flux all ave/time 1 1000 1000 f_11 f_12 file Heat_Flux.txt
+
+# Run the final data collection
+run         2000000
+
+print "NEMD Simulation Complete. Check Tgradient.txt and Heat_Flux.txt."

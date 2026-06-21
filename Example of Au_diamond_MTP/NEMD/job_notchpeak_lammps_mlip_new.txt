@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#SBATCH --time=3-00:00:00 # walltime, abbreviated by -t
+#SBATCH --nodes=1 # number of cluster nodes, abbreviated by -N
+#SBATCH -o slurm-%j.out-%N # name of the stdout, using the job number (%j) and the first node (%N)
+#SBATCH --ntasks=64 # number of MPI tasks, abbreviated by -n # additional information for allocated clusters
+#SBATCH --account=fengt-np # account - abbreviated by -A
+#SBATCH --partition=fengt-np # partition, abbreviated by -p # # set data and working directories
+
+
+cd $SLURM_SUBMIT_DIR
+
+
+ml gcc/8.5.0 intel-oneapi-mpi/2021.1.1
+export LAMMPS_ML=/uufs/chpc.utah.edu/common/home/u6035043/MLIP-LAMMPS2/mylammps/src/lmp_g++_openmpi
+mpirun -np $SLURM_NTASKS $LAMMPS_ML< inputfile.txt >  log
+
+
+

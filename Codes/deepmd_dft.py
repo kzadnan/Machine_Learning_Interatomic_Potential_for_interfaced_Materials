@@ -4,6 +4,12 @@ import matplotlib.pyplot as plt
 def calculate_rmse(true, pred):
     return np.sqrt(np.mean((true - pred)**2))
 
+def R2(rmse,true):
+    sd=np.std(true)
+    return 1 - (rmse/sd)**2
+    
+    
+
 # --- 1. Energy Analysis ---
 data_e = np.genfromtxt("results.e.out")
 dft_energy = data_e[:, 0]
@@ -41,6 +47,13 @@ dft_stress = data_v[:, 0:9]
 deepmd_stress = data_v[:, 9:18]
 rmse_v = calculate_rmse(dft_stress, deepmd_stress)
 
+R2_v= R2(rmse_v,dft_stress)
+
+R2_f= R2(rmse_f,dft_forces)
+
+R2_e= R2(rmse_e,dft_energy)
+
+
 plt.figure(3)
 plt.title(f"Stress Correlation (RMSE: {rmse_v:.4f} eV)")
 plt.xlabel("DFT stress")
@@ -55,4 +68,9 @@ print("-" * 30)
 print(f"RMSE Energy: {rmse_e:.6f} eV")
 print(f"RMSE Forces: {rmse_f:.6f} eV/Å")
 print(f"RMSE Stress: {rmse_v:.6f} eV")
+print(f"R2 of Stress: {R2_v:.6f}")
+print(f"R2 of energy: {R2_e:.6f}")
+print(f"R2 of forces: {R2_f:.6f}")
+
+
 print("-" * 30)

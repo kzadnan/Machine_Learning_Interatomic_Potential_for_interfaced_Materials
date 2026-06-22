@@ -48,7 +48,7 @@ Adnan, K. Z., Abedien, T., & Feng, T. (2026). Si/diamond thermal boundary conduc
 ```
 
 
-### Au/Diamond Potential (MTP)
+### Metal(Al,Mo,Zr,Au)/Diamond Potential (MTP)
 Please cite the following paper when using the Au/diamond Moment Tensor Potential (MTP):
 
 **Citation:**

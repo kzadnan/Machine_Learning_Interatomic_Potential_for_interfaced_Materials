@@ -26,15 +26,12 @@ Adnan, K. Z., Abedien, T., & Feng, T. (2026). Si/diamond thermal boundary conduc
 }
 
 ### 2. Au/Diamond Potential (MTP)
-
 Please cite the following paper when using the Au/diamond Moment Tensor Potential (MTP):
 
-Citation:
+**Citation:**
 Adnan, K. Z., Neupane, M. R., & Feng, T. (2024). Thermal boundary conductance of metal–diamond interfaces predicted by machine learning interatomic potentials. International Journal of Heat and Mass Transfer. https://doi.org/10.1016/j.ijheatmasstransfer.2024.126227
-
 **BibTeX:**
-Code snippet
-
+```bibtex
 @article{adnan2024thermal,
   title = {Thermal boundary conductance of metal–diamond interfaces predicted by machine learning interatomic potentials},
   author = {Adnan, Khalid Zobaid and Neupane, Mahesh R. and Feng, Tianli},

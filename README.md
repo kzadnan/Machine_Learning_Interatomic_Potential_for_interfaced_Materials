@@ -12,12 +12,12 @@ These potentials have been specifically trained to accurately capture complex at
 ### 1. Silicon/Diamond (Si/Diamond) Interface
 Direct integration of silicon with diamond is highly desirable for advanced thermal management, but lattice mismatches and weak bonding often degrade thermal transport. This deep learning potential was developed to accurately model the Si/diamond interface, including the intricate effects of intermediate bonding layers. 
 * **Applications:** Specifically optimized to evaluate and predict the enhancement of Thermal Boundary Conductance (TBC) through the introduction of ultrathin interlayers, such as $\mathrm{SiN}_{x}$ and amorphous carbon. 
-* **Compatibility:** Designed for use with the DeePMD-kit backend in LAMMPS.
+* **Compatibility:** Designed for use with the DeePMD-kit and MTP backend in LAMMPS.
 
 ### 2. Gold/Diamond (Au/Diamond) Interface
 Metal-dielectric interfaces present unique challenges in computational modeling due to the stark differences in their vibrational densities of states. This Moment Tensor Potential (MTP) bridges that gap, providing near-DFT accuracy at molecular dynamics scales.
 * **Applications:** Developed to predict the thermal boundary conductance of metal-diamond interfaces. It accurately captures the phonon dynamics and atomic-level structural relaxations required to evaluate heat dissipation from metallic contacts into diamond substrates.
-* **Compatibility:** Designed for use with the MLIP package in LAMMPS.
+* **Compatibility:** Designed for use with the MTP package in LAMMPS.
 
 ---
 

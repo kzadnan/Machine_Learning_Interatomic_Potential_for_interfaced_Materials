@@ -1,4 +1,4 @@
-# Machine Learning Interatomic Potentials (MLIPs)
+# Machine Learning Interatomic Potentials-semiconductor-interfaces
 
 This repository contains the machine learning interatomic potentials developed and utilized in our published research. If you use these potentials or the associated data in your work, please cite the corresponding publications below.
 
@@ -30,6 +30,7 @@ Please cite the following paper when using the Au/diamond Moment Tensor Potentia
 
 **Citation:**
 Adnan, K. Z., Neupane, M. R., & Feng, T. (2024). Thermal boundary conductance of metal–diamond interfaces predicted by machine learning interatomic potentials. International Journal of Heat and Mass Transfer. https://doi.org/10.1016/j.ijheatmasstransfer.2024.126227
+
 **BibTeX:**
 ```bibtex
 @article{adnan2024thermal,

@@ -2,7 +2,7 @@
 
 This repository contains the machine learning interatomic potentials developed and utilized in our published research. If you use these potentials or the associated data in your work, please cite the corresponding publications below.
 
-### 1. Si/Diamond Potential
+### 1. Si/Diamond Potential (MTP)
 Please cite the following paper when using the Si/diamond potential:
 
 **Citation:**
@@ -25,14 +25,14 @@ Adnan, K. Z., Abedien, T., & Feng, T. (2026). Si/diamond thermal boundary conduc
   url = {[https://link.aps.org/doi/10.1103/84jf-svtg](https://link.aps.org/doi/10.1103/84jf-svtg)}
 }
 
-2. Au/Diamond Potential (MTP)
+### 2. Au/Diamond Potential (MTP)
 
 Please cite the following paper when using the Au/diamond Moment Tensor Potential (MTP):
 
 Citation:
 Adnan, K. Z., Neupane, M. R., & Feng, T. (2024). Thermal boundary conductance of metal–diamond interfaces predicted by machine learning interatomic potentials. International Journal of Heat and Mass Transfer. https://doi.org/10.1016/j.ijheatmasstransfer.2024.126227
 
-BibTeX:
+**BibTeX:**
 Code snippet
 
 @article{adnan2024thermal,

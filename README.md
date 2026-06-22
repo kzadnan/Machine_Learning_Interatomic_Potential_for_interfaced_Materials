@@ -1,10 +1,31 @@
 # Machine Learning Interatomic Potentials-semiconductor-interfaces
+Welcome to the official repository for the machine learning interatomic potentials developed and utilized in our computational materials research. 
 
-This repository contains the machine learning interatomic potentials developed and utilized in our published research. If you use these potentials or the associated data in your work, please cite the corresponding publications below.
+This repository hosts highly accurate potentials designed explicitly to simulate complex heterogeneous interfaces. Thermal management in advanced semiconductor and electronic devices often relies on integrating high-thermal-conductivity substrates, such as diamond. However, interfacial thermal resistance frequently serves as a major bottleneck. 
 
-### 1. Si/Diamond Potential (MTP)
-Please cite the following paper when using the Si/diamond potential:
+These potentials have been specifically trained to accurately capture complex atomic interactions, phonon dispersion, and thermal boundary conductance (TBC) across these critical interfaces using Non-Equilibrium Molecular Dynamics (NEMD) simulations in LAMMPS.
 
+---
+
+## 📂 Included Potentials & Interface Descriptions
+
+### 1. Silicon/Diamond (Si/Diamond) Interface
+Direct integration of silicon with diamond is highly desirable for advanced thermal management, but lattice mismatches and weak bonding often degrade thermal transport. This deep learning potential was developed to accurately model the Si/diamond interface, including the intricate effects of intermediate bonding layers. 
+* **Applications:** Specifically optimized to evaluate and predict the enhancement of Thermal Boundary Conductance (TBC) through the introduction of ultrathin interlayers, such as $\mathrm{SiN}_{x}$ and amorphous carbon. 
+* **Compatibility:** Designed for use with the DeePMD-kit backend in LAMMPS.
+
+### 2. Gold/Diamond (Au/Diamond) Interface
+Metal-dielectric interfaces present unique challenges in computational modeling due to the stark differences in their vibrational densities of states. This Moment Tensor Potential (MTP) bridges that gap, providing near-DFT accuracy at molecular dynamics scales.
+* **Applications:** Developed to predict the thermal boundary conductance of metal-diamond interfaces. It accurately captures the phonon dynamics and atomic-level structural relaxations required to evaluate heat dissipation from metallic contacts into diamond substrates.
+* **Compatibility:** Designed for use with the MLIP package in LAMMPS.
+
+---
+
+## 📝 Citations & Usage
+
+If you utilize these potentials, training datasets, or associated simulation methodologies in your research, please cite the corresponding publications below:
+
+### Si/Diamond Potential
 **Citation:**
 Adnan, K. Z., Abedien, T., & Feng, T. (2026). Si/diamond thermal boundary conductance enhanced by $\mathrm{SiN}_{x}$ and amorphous carbon interlayers. *Physical Review Applied*, 25(4), 044013. https://doi.org/10.1103/84jf-svtg
 
@@ -25,7 +46,9 @@ Adnan, K. Z., Abedien, T., & Feng, T. (2026). Si/diamond thermal boundary conduc
   url = {[https://link.aps.org/doi/10.1103/84jf-svtg](https://link.aps.org/doi/10.1103/84jf-svtg)}
 }
 ```
-### 2. Au/Diamond Potential (MTP)
+
+
+### Au/Diamond Potential (MTP)
 Please cite the following paper when using the Au/diamond Moment Tensor Potential (MTP):
 
 **Citation:**

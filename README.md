@@ -25,7 +25,7 @@ Metal-dielectric interfaces present unique challenges in computational modeling 
 
 If you utilize these potentials, training datasets, or associated simulation methodologies in your research, please cite the corresponding publications below:
 
-### Si/Diamond Potential
+### Si/Diamond Potential (DeePMD & MTP)
 **Citation:**
 Adnan, K. Z., Abedien, T., & Feng, T. (2026). Si/diamond thermal boundary conductance enhanced by $\mathrm{SiN}_{x}$ and amorphous carbon interlayers. *Physical Review Applied*, 25(4), 044013. https://doi.org/10.1103/84jf-svtg
 

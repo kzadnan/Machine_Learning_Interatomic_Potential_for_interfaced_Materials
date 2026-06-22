@@ -10,7 +10,7 @@ These potentials have been specifically trained to accurately capture complex at
 ## 📂 Included Potentials & Interface Descriptions
 
 ### 1. Silicon/Diamond (Si/Diamond) Interface
-Direct integration of silicon with diamond is highly desirable for advanced thermal management, but lattice mismatches and weak bonding often degrade thermal transport. This deep learning potential was developed to accurately model the Si/diamond interface, including the intricate effects of intermediate bonding layers. 
+Direct integration of silicon with diamond is highly desirable for advanced thermal management, but lattice mismatches and weak bonding often degrade thermal transport. The deep learning potential and moment tensor potentials are developed to accurately model the Si/diamond interface, including the intricate effects of intermediate bonding layers. 
 * **Applications:** Specifically optimized to evaluate and predict the enhancement of Thermal Boundary Conductance (TBC) through the introduction of ultrathin interlayers, such as $\mathrm{SiN}_{x}$ and amorphous carbon. 
 * **Compatibility:** Designed for use with the DeePMD-kit and MTP backend in LAMMPS.
 

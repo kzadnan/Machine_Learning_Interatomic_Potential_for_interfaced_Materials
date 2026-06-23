@@ -1,0 +1,89 @@
+units metal
+
+variable 	T equal 300
+variable 	V equal vol
+variable 	dt equal 0.001
+variable 	d equal 2000	# thermo interval
+
+# convert from LAMMPS metal units to SI
+variable 	kB equal 1.3806504e-23	 # [J/K] Boltzmann constant
+variable 	eV2J equal 1.602176565e-19
+variable	ps2s equal 1.0e-12
+variable 	A2m equal 1.0e-10
+
+# set up problem
+dimension 	3
+boundary 	p p s
+atom_style atomic
+
+neighbor	2.0 nsq
+read_data lammps.txt
+
+pair_style mlip mlip.ini
+pair_coeff * * 
+
+# define cold and hot regions
+variable 	l_c equal 5.442
+variable 	Neach equal 80
+variable 	Nedge equal 8
+variable 	Nres equal 8
+variable 	NSED equal 8
+variable 	Nabdon equal 4
+
+variable     posi_leftedge equal 8.0
+variable     posi_rightedge equal 176.0872
+variable     posi_hot equal 21.0
+variable     posi_cold equal 139.0872
+
+region 112 block INF INF INF INF INF ${posi_leftedge} units box
+group edge_left region 112
+region 113 block INF INF INF INF ${posi_rightedge} INF units box
+group edge_right region 113
+region 114 block INF INF INF INF ${posi_leftedge}  ${posi_rightedge} units box
+group mid region 114
+
+region 2 block INF INF INF INF ${posi_leftedge}  ${posi_hot} units box
+group hot region 2
+region 3 block  INF INF INF INF ${posi_cold} ${posi_rightedge} units box
+group cold region 3
+
+velocity edge_left set  0.0 0.0 0.0
+velocity edge_right set 0.0 0.0 0.0
+
+# initial velocity
+velocity 	mid create 300 728462 mom yes rot yes dist gaussian
+
+timestep 	${dt}
+thermo_style    custom step temp press pe ke lx ly lz
+thermo	${d}
+
+# ------------- Equilibration and thermalisation ---------------- 
+fix  NVT mid nvt temp ${T} ${T} 0.10 
+dump 1112 all atom 250 nvt.tj #it was npt before
+run 	1500000
+unfix   NVT
+undump  1112
+
+# --------------- Equilibration in nve ----------------- 
+reset_timestep  0
+
+fix 11 hot  langevin 330.0 330.0 0.5 48279  tally yes
+fix 12 cold langevin 270.0 270.0 0.5 48279  tally yes
+
+fix 	NVE mid nve
+
+thermo_style    custom step temp press pe ke lx ly lz f_11 f_12
+thermo	${d}
+
+run 	1000000
+
+# output temperature data for post-processing
+reset_timestep  0
+
+compute      myKE mid ke/atom    # per atom kinetic energy for temperature calculation
+variable temp1 atom c_myKE*${eV2J}*2/3/${kB}    # 1/2*m*v^2 = 3/2*kB*T, unit conversion
+
+compute cc1 mid chunk/atom bin/1d z lower 2.0 units box
+fix 104 mid ave/chunk 10 100000 1000000 cc1 v_temp1 file Tgradient.txt
+
+run 1000000
